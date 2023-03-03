@@ -51,6 +51,8 @@ func (o *Order) Save() {
 	fmt.Println("Save order data")
 	// call afterSave()
 }
+func (p *Order) BeforeSave() { fmt.Println("*Order.BeforeSave") }
+func (p *Order) AfterSave()  { fmt.Println("*Order.AfterSave") }
 
 type Item struct{}     // for demonstration purpose
 type ObjectId struct{} // for demonstration purpose
