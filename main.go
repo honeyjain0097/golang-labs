@@ -8,8 +8,10 @@ import (
 
 func main() {
 	fmt.Println("---- MAIN ----")
-	readcontract.ReadIsWhiteList()
-	readcontract.ReadIsBridgeIsTxnFilled()
+	// readcontract.ReadIsWhiteList()
+	// readcontract.ReadIsBridgeIsTxnFilled()
 	// readcontract.ReadBridgeOwner()
 	// readcontract.ReadWhitelistOwner()
+	// readcontract.ReadOwner("https://rpc-testnet.escscan.com", "0x37Cf8Bbb0358AeFa99580DC904Aea7863a6EE9B6")
+	readcontract.ReadOwner("https://rpc.escscan.com", "0xc929Be511347Cd4133fC22d4eA405fc3161c12A5")
 }

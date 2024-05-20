@@ -121,7 +121,7 @@ func hexStringToBytes(hexString string) ([]byte, error) {
 }
 func ReadIsBridgeIsTxnFilled() {
 	// Connect to an Ethereum node
-	const providerUrl = "https://rpc.escscan.com"
+	const providerUrl = "https://rpc-testnet.escscan.com"
 	client, err := ethclient.Dial(providerUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -129,7 +129,7 @@ func ReadIsBridgeIsTxnFilled() {
 	defer client.Close()
 
 	// Load the ABI of the smart contract
-	contractAddress := common.HexToAddress("0x96a9d989fE46220c1124f12384571aB6fdEb0B1E")
+	contractAddress := common.HexToAddress("0xF690439F960D483B103917e53d8049285d479058")
 	data, err := os.ReadFile("./lib/readcontract/bridge_abi.json")
 	if err != nil {
 		fmt.Printf("Error in read contract abi ")
@@ -171,8 +171,6 @@ func ReadIsBridgeIsTxnFilled() {
 		fmt.Println("Empty result returned from contract function")
 	}
 
-	fmt.Printf("data :: %b", data)
-
 	// Decode the result
 	unPackData, err := abiInstance.Unpack("isTxnFilled", data)
 	if err != nil {
@@ -185,7 +183,7 @@ func ReadIsBridgeIsTxnFilled() {
 
 func ReadBridgeOwner() {
 	// Connect to an Ethereum node
-	const providerUrl = "https://rpc.escscan.com"
+	const providerUrl = "https://rpc-testnet.escscan.com"
 	client, err := ethclient.Dial(providerUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -193,8 +191,54 @@ func ReadBridgeOwner() {
 	defer client.Close()
 
 	// Load the ABI of the smart contract
-	contractAddress := common.HexToAddress("0x96a9d989fE46220c1124f12384571aB6fdEb0B1E")
+	contractAddress := common.HexToAddress("0xF690439F960D483B103917e53d8049285d479058")
 	data, err := os.ReadFile("./lib/readcontract/bridge_abi.json")
+	if err != nil {
+		fmt.Printf("Error in read contract abi ")
+		fmt.Print(err)
+	}
+	abiInstance, err := abi.JSON(strings.NewReader(string(data)))
+	if err != nil {
+		fmt.Printf("Error in abiInstance")
+		log.Fatal(err)
+	}
+
+	// Call the balanceOf function
+	data, err = abiInstance.Pack("owner")
+	if err != nil {
+		fmt.Printf("Error in pack")
+		log.Fatal(err)
+	}
+	data, err = client.CallContract(context.Background(), ethereum.CallMsg{
+		To:   &contractAddress,
+		Data: data,
+	}, nil)
+	if err != nil {
+		fmt.Printf("Error in call contract")
+		log.Fatal(err)
+	}
+
+	// Decode the result
+	unPackData, err := abiInstance.Unpack("owner", data)
+	if err != nil {
+		fmt.Printf("Error in Unpack")
+		log.Fatal(err)
+	}
+
+	fmt.Printf("whitelist owner : %t\n", unPackData)
+}
+
+func ReadOwner(providerUrl string, contract_address string) {
+	// Connect to an Ethereum node
+	client, err := ethclient.Dial(providerUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+
+	// Load the ABI of the smart contract
+	contractAddress := common.HexToAddress(contract_address)
+	data, err := os.ReadFile("./lib/readcontract/whitelist_abi.json")
 	if err != nil {
 		fmt.Printf("Error in read contract abi ")
 		fmt.Print(err)
