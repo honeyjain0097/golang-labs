@@ -11,4 +11,5 @@ func main() {
 	readcontract.ReadIsWhiteList()
 	readcontract.ReadIsBridgeIsTxnFilled()
 	// readcontract.ReadBridgeOwner()
+	// readcontract.ReadWhitelistOwner()
 }
