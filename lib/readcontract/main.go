@@ -75,7 +75,7 @@ func hexStringToBytes(hexString string) ([]byte, error) {
 }
 func ReadIsBridgeIsTxnFilled() {
 	// Connect to an Ethereum node
-	const providerUrl = "https://rpc.escscan.com"
+	const providerUrl = "https://rpc-testnet.escscan.com"
 	client, err := ethclient.Dial(providerUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -83,7 +83,7 @@ func ReadIsBridgeIsTxnFilled() {
 	defer client.Close()
 
 	// Load the ABI of the smart contract
-	contractAddress := common.HexToAddress("0x38Fc44F166c2F04DdB89CD9c00740859eF9eB42E")
+	contractAddress := common.HexToAddress("0xF690439F960D483B103917e53d8049285d479058")
 	data, err := os.ReadFile("./lib/readcontract/bridge_abi.json")
 	if err != nil {
 		fmt.Printf("Error in read contract abi ")
@@ -135,4 +135,56 @@ func ReadIsBridgeIsTxnFilled() {
 	}
 
 	fmt.Printf("Is isTxnFilled: %t\n", unPackData)
+}
+
+func ReadBridgeOwner() {
+	// Connect to an Ethereum node
+	const providerUrl = "https://rpc-testnet.escscan.com"
+	client, err := ethclient.Dial(providerUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Close()
+
+	// Load the ABI of the smart contract
+	contractAddress := common.HexToAddress("0xF690439F960D483B103917e53d8049285d479058")
+	data, err := os.ReadFile("./lib/readcontract/bridge_abi.json")
+	if err != nil {
+		fmt.Printf("Error in read contract abi ")
+		fmt.Print(err)
+	}
+	abiInstance, err := abi.JSON(strings.NewReader(string(data)))
+	if err != nil {
+		fmt.Printf("Error in abiInstance")
+		log.Fatal(err)
+	}
+
+	data, err = abiInstance.Pack("owner")
+	if err != nil {
+		fmt.Printf("Error in pack")
+		log.Fatal(err)
+	}
+	data, err = client.CallContract(context.Background(), ethereum.CallMsg{
+		To:   &contractAddress,
+		Data: data,
+	}, nil)
+	if err != nil {
+		fmt.Printf("Error in call contract\n")
+		log.Fatal(err)
+	}
+	// Check if result data is empty
+	if len(data) == 0 {
+		fmt.Println("Empty result returned from contract function")
+	}
+
+	fmt.Printf("data :: %b", data)
+
+	// Decode the result
+	unPackData, err := abiInstance.Unpack("owner", data)
+	if err != nil {
+		fmt.Printf("Error in Unpack")
+		log.Fatal(err)
+	}
+
+	fmt.Printf("owner: %t\n", unPackData)
 }
