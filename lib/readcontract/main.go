@@ -119,9 +119,7 @@ func hexStringToBytes(hexString string) ([]byte, error) {
 	}
 	return bytes, nil
 }
-func ReadIsBridgeIsTxnFilled() {
-	// Connect to an Ethereum node
-	const providerUrl = "https://rpc-testnet.escscan.com"
+func ReadIsBridgeIsTxnFilled(providerUrl string, contract_address string) {
 	client, err := ethclient.Dial(providerUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -129,7 +127,7 @@ func ReadIsBridgeIsTxnFilled() {
 	defer client.Close()
 
 	// Load the ABI of the smart contract
-	contractAddress := common.HexToAddress("0xF690439F960D483B103917e53d8049285d479058")
+	contractAddress := common.HexToAddress(contract_address)
 	data, err := os.ReadFile("./lib/readcontract/bridge_abi.json")
 	if err != nil {
 		fmt.Printf("Error in read contract abi ")
@@ -177,8 +175,9 @@ func ReadIsBridgeIsTxnFilled() {
 		fmt.Printf("Error in Unpack")
 		log.Fatal(err)
 	}
+	val, _ := unPackData[0].(bool)
 
-	fmt.Printf("Is isTxnFilled: %t\n", unPackData)
+	fmt.Printf("Is isTxnFilled: %t\n", val)
 }
 
 func ReadBridgeOwner() {
