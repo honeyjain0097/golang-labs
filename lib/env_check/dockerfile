@@ -1,0 +1,11 @@
+# Multi-stage build for the builder stage
+FROM golang:1.22.2-alpine3.19 
+
+WORKDIR /app
+
+# Copy the rest of the application code
+COPY . .
+
+
+# Command to run the application
+CMD ["go","run","main.go"]
